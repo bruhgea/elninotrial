@@ -1,37 +1,95 @@
-﻿using todoapp.Domain;
+﻿using Microsoft.EntityFrameworkCore;
+using todoapp.Domain;
 using todoapp.Domain.Entities;
 
 namespace todoapp.Data;
 
-public class TaskRepository : ITaskRepository
+public class TaskRepository(AppDbContext context) : ITaskRepository
 {
-    public Task<IEnumerable<TaskEntity>> GetAllAsync()
+    public async Task<IEnumerable<TaskEntity>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        var tasksModel = await context.Tasks.ToListAsync();
+
+        var tasksEntities = tasksModel.Select(task => new TaskEntity
+            {
+                Id = task.Id,
+                Title = task.Title,
+                Description = task.Description,
+                Done = task.Done
+            }
+        );
+        return tasksEntities;
     }
 
-    public Task<TaskEntity> GetByIdAsync(long id)
+    public async Task<TaskEntity?> GetByIdAsync(long id)
     {
-        throw new NotImplementedException();
+        var taskItem = await context.Tasks.FindAsync(id);
+        if (taskItem == null)
+            return  null;
+
+        var taskEntity = new TaskEntity
+        {
+            Id = taskItem.Id,
+            Title = taskItem.Title,
+            Description = taskItem.Description,
+            Done = taskItem.Done
+        };
+        return taskEntity;
     }
 
-    public Task CreateAsync(string title, string description)
+    public async Task<TaskEntity> CreateAsync(string title, string description)
     {
-        throw new NotImplementedException();
+        var taskModel = new TaskModel
+        {
+            Title = title,
+            Description = description,
+            Done = false
+        };
+        context.Tasks.Add(taskModel);
+        await context.SaveChangesAsync();
+
+        return new TaskEntity()
+        {
+            Id = taskModel.Id,
+            Title = taskModel.Title,
+            Description = taskModel.Description,
+            Done = taskModel.Done
+        };
     }
 
-    public Task<bool> UpdateTaskAsync(TaskEntity task)
+    public async Task<bool> UpdateTaskAsync(TaskEntity task)
     {
-        throw new NotImplementedException();
+        var taskModel = await context.Tasks.FindAsync(task.Id);
+        if (taskModel == null)
+            return false;
+        
+        taskModel.Title = task.Title;
+        taskModel.Description = task.Description;
+        taskModel.Done = task.Done;
+
+        await context.SaveChangesAsync(); 
+        return true;
     }
 
-    public Task<bool> UpdateTaskCompletionAsync(long id, bool isDone)
+    public async Task<bool> UpdateTaskCompletionAsync(long id, bool isDone)
     {
-        throw new NotImplementedException();
+        var taskModel = await context.Tasks.FindAsync(id);
+        if (taskModel == null)
+            return false;
+        
+        taskModel.Done = isDone;
+        
+        await context.SaveChangesAsync(); 
+        return true;
     }
 
-    public Task<bool> DeleteAsync(long id)
+    public async Task<bool> DeleteAsync(long id)
     {
-        throw new NotImplementedException();
+        var task = await context.Tasks.FindAsync(id);
+        if(task == null)
+            return false;
+        context.Tasks.Remove(task);
+        await context.SaveChangesAsync();
+        return true;
     }
 }
