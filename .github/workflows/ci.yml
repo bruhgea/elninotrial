@@ -29,4 +29,4 @@ jobs:
         run: dotnet test todoapp.slnx --no-build --configuration Release
 
       - name: Build Docker image
-        run: docker build -t todoapp-api ./testproject
+        run: docker build -t todoapp-api ./todoapp
