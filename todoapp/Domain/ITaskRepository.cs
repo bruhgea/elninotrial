@@ -1,4 +1,5 @@
-﻿using todoapp.Domain.Entities;
+﻿using todoapp.API.Requests;
+using todoapp.Domain.Entities;
 
 namespace todoapp.Domain;
 

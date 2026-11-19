@@ -20,7 +20,6 @@ public class TasksController(IGetTasksUseCase getTasksUseCase,
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TaskDto>>> GetAllTasks()
     {
-       // return await context.Tasks.ToListAsync();
        var tasksEntities = await getTasksUseCase.ExecuteAsync();
 
        var tasksDto = tasksEntities.Select(task => new TaskDto
@@ -54,7 +53,15 @@ public class TasksController(IGetTasksUseCase getTasksUseCase,
     {
         var createdTask = await createTaskUseCase.ExecuteAsync(createTaskRequest.Title, createTaskRequest.Description);
         
-        return CreatedAtAction(nameof(GetTaskById), new { id = createdTask.Id }, createdTask);
+        var taskDto = new TaskDto()
+        {
+            Id = createdTask.Id,
+            Title = createdTask.Title,
+            Description = createdTask.Description,
+            Done = createdTask.Done
+        };
+        
+        return CreatedAtAction(nameof(GetTaskById), new { id = taskDto.Id }, taskDto);
     }
 
     [HttpPut("{id}")]
