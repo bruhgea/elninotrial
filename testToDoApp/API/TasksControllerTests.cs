@@ -12,6 +12,7 @@ public class TasksControllerTests
 {
     private readonly IGetTasksUseCase _getTasksUseCase;
     private readonly IGetTaskByIdUseCase _getTaskByIdUseCase;
+    private readonly IGetActiveTasksUseCase _getActiveTasksUseCase;
     private readonly ICreateTaskUseCase _createTaskUseCase;
     private readonly IUpdateTaskUseCase _updateTaskUseCase;
     private readonly IUpdateTaskCompletionUseCase _updateTaskCompletionUseCase;
@@ -22,11 +23,12 @@ public class TasksControllerTests
     {
         _getTasksUseCase = Substitute.For<IGetTasksUseCase>();
         _getTaskByIdUseCase = Substitute.For<IGetTaskByIdUseCase>();
+        _getActiveTasksUseCase = Substitute.For<IGetActiveTasksUseCase>();
         _createTaskUseCase = Substitute.For<ICreateTaskUseCase>();
         _updateTaskUseCase = Substitute.For<IUpdateTaskUseCase>();
         _updateTaskCompletionUseCase = Substitute.For<IUpdateTaskCompletionUseCase>();
         _deleteTaskUseCase = Substitute.For<IDeleteTaskUseCase>();
-        _controller = new TasksController(_getTasksUseCase, _getTaskByIdUseCase,
+        _controller = new TasksController(_getTasksUseCase, _getTaskByIdUseCase, _getActiveTasksUseCase,
             _createTaskUseCase, _updateTaskUseCase, _updateTaskCompletionUseCase, _deleteTaskUseCase);
     }
     // Shared test data

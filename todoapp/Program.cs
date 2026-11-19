@@ -12,6 +12,7 @@ var configuration = builder.Configuration;
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<IGetTasksUseCase, GetTasksUseCase>();
 builder.Services.AddScoped<IGetTaskByIdUseCase, GetTaskByIdUseCase>();
+builder.Services.AddScoped<IGetActiveTasksUseCase, GetActiveTasksUseCase>();
 builder.Services.AddScoped<ICreateTaskUseCase, CreateTaskUseCase>();
 builder.Services.AddScoped<IUpdateTaskUseCase, UpdateTaskUseCase>();
 builder.Services.AddScoped<IUpdateTaskCompletionUseCase, UpdateTaskCompletionUseCase>();

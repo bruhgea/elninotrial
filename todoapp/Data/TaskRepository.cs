@@ -22,6 +22,21 @@ public class TaskRepository(AppDbContext context) : ITaskRepository
         return tasksEntities;
     }
 
+    public async Task<IEnumerable<TaskEntity>> GetAllActiveAsync()
+    {
+        var tasksModel = await context.Tasks.Where(task => !task.Done).ToListAsync();
+        
+        var tasksEntities = tasksModel.Select(task => new TaskEntity
+            {
+                Id = task.Id,
+                Title = task.Title,
+                Description = task.Description,
+                Done = task.Done
+            }
+        );
+        return tasksEntities;
+    }
+
     public async Task<TaskEntity?> GetByIdAsync(long id)
     {
         var taskItem = await context.Tasks.FindAsync(id);

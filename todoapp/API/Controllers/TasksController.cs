@@ -10,6 +10,7 @@ namespace todoapp.API.Controllers;
 [Route("[controller]")]
 public class TasksController(IGetTasksUseCase getTasksUseCase,
     IGetTaskByIdUseCase getTaskByIdUseCase,
+    IGetActiveTasksUseCase getActiveTasksUseCase,
     ICreateTaskUseCase createTaskUseCase,
     IUpdateTaskUseCase updateTaskUseCase,
     IUpdateTaskCompletionUseCase updateTaskCompletionUseCase,
@@ -28,6 +29,21 @@ public class TasksController(IGetTasksUseCase getTasksUseCase,
            Done = task.Done
        });
        return Ok(tasksDto);
+    }
+
+    [HttpGet("active")]
+  
+    public async Task<ActionResult<IEnumerable<TaskDto>>> GetActiveTasks()
+    {
+        var tasksEntities = await getActiveTasksUseCase.ExecuteAsync();
+        var tasksDto = tasksEntities.Select(task => new TaskDto
+        {
+            Id = task.Id,
+            Title = task.Title,
+            Description = task.Description,
+            Done = task.Done
+        });
+        return Ok(tasksDto);
     }
 
     [HttpGet("{id}")]
