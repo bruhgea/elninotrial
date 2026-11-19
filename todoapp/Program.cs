@@ -1,6 +1,12 @@
+using Microsoft.EntityFrameworkCore;
+using todoapp.Data;
+
 var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
 
 // Add services to the container.
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite(configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
