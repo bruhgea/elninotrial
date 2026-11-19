@@ -1,73 +1,100 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using todoapp.API.DTOs;
+using todoapp.API.Requests;
 using todoapp.Data;
+using todoapp.Domain.Entities;
+using todoapp.Domain.UseCases.Interfaces;
 
-namespace todoapp.Controllers;
+namespace todoapp.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class TasksController(AppDbContext context) : ControllerBase
+public class TasksController(IGetTasksUseCase getTasksUseCase,
+    IGetTaskByIdUseCase getTaskByIdUseCase,
+    ICreateTaskUseCase createTaskUseCase,
+    IUpdateTaskUseCase updateTaskUseCase,
+    IUpdateTaskCompletionUseCase updateTaskCompletionUseCase,
+    IDeleteTaskUseCase deleteTaskUseCase) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<TaskModel>>> GetAllTasks()
+    public async Task<ActionResult<IEnumerable<TaskDto>>> GetAllTasks()
     {
-        return await context.Tasks.ToListAsync();
+       // return await context.Tasks.ToListAsync();
+       var tasksEntities = await getTasksUseCase.ExecuteAsync();
+
+       var tasksDto = tasksEntities.Select(task => new TaskDto
+       {
+           Id = task.Id,
+           Title = task.Title,
+           Description = task.Description,
+           Done = task.Done
+       });
+       return Ok(tasksDto);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<TaskModel>> GetTaskById(long id)
+    public async Task<ActionResult<TaskDto>> GetTaskById(long id)
     {
-        var taskItem = await context.Tasks.FindAsync(id);
+        var taskItem = await getTaskByIdUseCase.ExecuteAsync(id);
         if (taskItem == null)
             return NotFound();
-        
-        return Ok(taskItem);
+        var taskDto = new TaskDto()
+        {
+            Id = taskItem.Id,
+            Title = taskItem.Title,
+            Description = taskItem.Description,
+            Done = taskItem.Done
+        };
+        return Ok(taskDto);
     }
 
     [HttpPost]
-    public async Task<ActionResult<TaskModel>> CreateTask([FromBody]TaskModel taskItem)
+    public async Task<ActionResult<TaskDto>> CreateTask([FromBody]CreateTaskRequest createTaskRequest)
     {
-        context.Tasks.Add(taskItem);
-        await context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetTaskById), new { id = taskItem.Id }, taskItem);
+        var createdTask = await createTaskUseCase.ExecuteAsync(createTaskRequest.Title, createTaskRequest.Description);
+        
+        return CreatedAtAction(nameof(GetTaskById), new { id = createdTask.Id }, createdTask);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateTask(long id,[FromBody] TaskModel taskItem)
+    public async Task<IActionResult> UpdateTask(long id,[FromBody] UpdateTaskRequest updateTaskRequest)
     {
-        var task = await context.Tasks.FindAsync(id);
-        if(task == null)
-            return NotFound();
-        task.Title = taskItem.Title;
-        task.Description = taskItem.Description;
-        task.Done = taskItem.Done;
+        var updateTaskEntity = new TaskEntity()
+        {
+            Id = id,
+            Title = updateTaskRequest.Title,
+            Description = updateTaskRequest.Description,
+            Done = updateTaskRequest.Done
 
-        await context.SaveChangesAsync();
+        };
+        var isSuccessful = await updateTaskUseCase.ExecuteAsync(updateTaskEntity);
+        
+        if(!isSuccessful)
+            return NotFound();
+
         return NoContent();
     }
 
     [HttpPatch("{id}")]
-    public async Task<IActionResult> UpdateTaskCompletion(long id, bool isDone)
+    public async Task<IActionResult> UpdateTaskCompletion(long id, [FromBody] UpdateTaskCompletionRequest updateTaskCompletionRequest)
     {
-        var task = await context.Tasks.FindAsync(id);
-        if(task == null)
+        var isSuccessful = await updateTaskCompletionUseCase.ExecuteAsync(id, updateTaskCompletionRequest.Done);
+        
+        if(!isSuccessful)
             return NotFound();
-    
-        task.Done = isDone;
-
-        await context.SaveChangesAsync();
+        
         return NoContent();
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteTask(long id)
     {
-        var task = await context.Tasks.FindAsync(id);
-        if(task == null)
+        var isSuccessful = await deleteTaskUseCase.ExecuteAsync(id);
+        
+        if(!isSuccessful)
             return NotFound();
-        context.Tasks.Remove(task);
-        await context.SaveChangesAsync();
+        
         return NoContent();
     }
 }
