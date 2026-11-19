@@ -1,0 +1,9 @@
+﻿services:
+  api:
+    image: ghcr.io/bruhgea/todoapp-api:${IMAGE_TAG:-latest}
+    container_name: todoapp-api-deployed
+    restart: unless-stopped
+    ports:
+      - "5081:8080"
+    volumes:
+      - ./elninodatabase.db:/app/elninodatabase.db
