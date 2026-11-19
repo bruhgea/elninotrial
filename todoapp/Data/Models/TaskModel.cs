@@ -1,4 +1,4 @@
-﻿namespace todoapp.Data;
+﻿namespace todoapp.Data.Models;
 
 public class TaskModel
 {

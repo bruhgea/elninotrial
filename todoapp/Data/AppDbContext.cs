@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using todoapp.Data.Models;
 
 namespace todoapp.Data;
 

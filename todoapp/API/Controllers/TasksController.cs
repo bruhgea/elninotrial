@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using todoapp.API.DTOs;
 using todoapp.API.Requests;
-using todoapp.Data;
 using todoapp.Domain.Entities;
 using todoapp.Domain.UseCases.Interfaces;
 
