@@ -5,8 +5,8 @@ namespace todoapp.Domain.UseCases;
 
 public class GetTasksUseCase(ITaskRepository taskRepository) : IGetTasksUseCase
 {
-    public async Task<IEnumerable<TaskEntity>> ExecuteAsync()
+    public async Task<IEnumerable<TaskEntity>> ExecuteAsync(bool? done, string? sortBy, bool descending)
     {
-        return await taskRepository.GetAllAsync();
+        return await taskRepository.GetAllAsync(done, sortBy, descending);
     }
 }

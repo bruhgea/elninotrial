@@ -4,7 +4,7 @@ namespace todoapp.Domain;
 
 public interface ITaskRepository
 {
-    Task<IEnumerable<TaskEntity>> GetAllAsync();
+    Task<IEnumerable<TaskEntity>> GetAllAsync(bool? done, string? sortBy, bool descending);
     Task<IEnumerable<TaskEntity>> GetAllActiveAsync();
     Task<TaskEntity?> GetByIdAsync(long id);
     Task<TaskEntity> CreateAsync(string title, string description);

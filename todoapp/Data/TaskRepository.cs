@@ -7,9 +7,32 @@ namespace todoapp.Data;
 
 public class TaskRepository(AppDbContext context) : ITaskRepository
 {
-    public async Task<IEnumerable<TaskEntity>> GetAllAsync()
+    public async Task<IEnumerable<TaskEntity>> GetAllAsync(bool? done,
+        string? sortBy,
+        bool descending)
     {
-        var tasksModel = await context.Tasks.ToListAsync();
+        var query = context.Tasks.AsQueryable();
+        
+        if (done.HasValue)
+        {
+            query = query.Where(task => task.Done == done.Value);
+        }
+
+        query = sortBy?.ToLower() switch
+        {
+            "title" => descending
+                ? query.OrderByDescending(task => task.Title)
+                : query.OrderBy(task => task.Title),
+
+            "id" => descending
+                ? query.OrderByDescending(task => task.Id)
+                : query.OrderBy(task => task.Id),
+
+            _ => query
+        };
+
+        
+        var tasksModel = await query.ToListAsync();
 
         var tasksEntities = tasksModel.Select(task => new TaskEntity
             {

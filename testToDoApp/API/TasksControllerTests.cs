@@ -78,10 +78,10 @@ public class TasksControllerTests
     {
         // Arrange
         var tasks = new List<TaskEntity> { _task1, _task2 };
-        _getTasksUseCase.ExecuteAsync().Returns(tasks);
+        _getTasksUseCase.ExecuteAsync(null, null, false).Returns(tasks);
         
         // Act
-        var result = await _controller.GetAllTasks();
+        var result = await _controller.GetAllTasks(null, null, false);
         
         // Assert
        
@@ -103,17 +103,17 @@ public class TasksControllerTests
         Assert.Equal("Other details", returnedTasksList[1].Description);
         Assert.True(returnedTasksList[1].Done);
         
-        await _getTasksUseCase.Received(1).ExecuteAsync();
+        await _getTasksUseCase.Received(1).ExecuteAsync(null, null, false);
     }
 
     [Fact]
     public async Task GetAllTasks_ReturnsOkAndEmptyList_WhenNoTasksExist()
     {
         // Arrange
-        _getTasksUseCase.ExecuteAsync().Returns(new List<TaskEntity>());
+        _getTasksUseCase.ExecuteAsync(null, null, false).Returns(new List<TaskEntity>());
         
         // Act
-        var result = await _controller.GetAllTasks();
+        var result = await _controller.GetAllTasks(null, null, false);
         
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -121,7 +121,7 @@ public class TasksControllerTests
         
         Assert.Empty(returnedTasks);
         
-        await _getTasksUseCase.Received(1).ExecuteAsync();
+        await _getTasksUseCase.Received(1).ExecuteAsync(null, null, false);
     }
 
     [Fact]

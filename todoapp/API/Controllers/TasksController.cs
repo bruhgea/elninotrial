@@ -17,9 +17,12 @@ public class TasksController(IGetTasksUseCase getTasksUseCase,
     IDeleteTaskUseCase deleteTaskUseCase) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<TaskDto>>> GetAllTasks()
+    public async Task<ActionResult<IEnumerable<TaskDto>>> GetAllTasks(
+        [FromQuery] bool? done,
+        [FromQuery] string? sortBy,
+        [FromQuery] bool descending = false)
     {
-       var tasksEntities = await getTasksUseCase.ExecuteAsync();
+       var tasksEntities = await getTasksUseCase.ExecuteAsync(done, sortBy, descending);
 
        var tasksDto = tasksEntities.Select(task => new TaskDto
        {

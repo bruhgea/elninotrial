@@ -40,27 +40,30 @@ public class GetTasksUseCaseTests
     public async Task GetAllTasks_Returns_ListOfTasks_WhenTasksExist()
     {
         // Arrange
-        _taskRepository.GetAllAsync().Returns(_tasksList);
-        
+        _taskRepository.GetAllAsync(null, null, false)
+            .Returns(_tasksList);
+
         // Act
-        var result = await _getTasksUseCase.ExecuteAsync();
-        
+        var result = await _getTasksUseCase.ExecuteAsync(null, null, false);
+
         // Assert
         Assert.Equal(_tasksList, result);
-        await _taskRepository.Received(1).GetAllAsync();
+        await _taskRepository.Received(1)
+            .GetAllAsync(null, null, false);
     }
     
     [Fact]
     public async Task GetAllTasks_Returns_EmptyList_WhenNoTasksExist()
     {
-        // Arrange
-        _taskRepository.GetAllAsync().Returns(new List<TaskEntity>());
-        
+        _taskRepository.GetAllAsync(null, null, false)
+            .Returns(new List<TaskEntity>());
+
         // Act
-        var result = await _getTasksUseCase.ExecuteAsync();
-        
+        var result = await _getTasksUseCase.ExecuteAsync(null, null, false);
+
         // Assert
         Assert.Empty(result);
-        await _taskRepository.Received(1).GetAllAsync();
+        await _taskRepository.Received(1)
+            .GetAllAsync(null, null, false);
     }
 }
