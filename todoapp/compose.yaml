@@ -1,0 +1,11 @@
+﻿services:
+  todoapp:
+    image: todoapp-api
+    container_name: todoapp-container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5081:8080"
+    volumes:
+      - ./elninodatabase.db:/app/elninodatabase.db
