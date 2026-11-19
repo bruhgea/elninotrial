@@ -5,7 +5,7 @@ Accept: application/json
 
 ###
 
-GET {{todoapp_HostAddress}}/weatherforecast/
+GET {{todoapp_HostAddress}}/tasks
 Accept: application/json
 
 ###
