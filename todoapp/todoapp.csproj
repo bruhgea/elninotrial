@@ -19,4 +19,10 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="API\DTOs\" />
+      <Folder Include="API\Requests\" />
+      <Folder Include="Domain\UseCases\Interfaces\" />
+    </ItemGroup>
+
 </Project>
